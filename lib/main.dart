@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:nonogram/widget/nonogram_input.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const NonogramApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class NonogramApp extends StatelessWidget {
+  const NonogramApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'nonogram',
+      title: 'narumincho nonogram solver',
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('nonogram'),
+          title: const Text('narumincho nonogram solver'),
         ),
-        body: const Text('イラストロジックを解いてくれるアプリ作りたい'),
+        body: const Row(children: [
+          Expanded(flex: 1, child: NonoGramInput()),
+          Expanded(flex: 1, child: Text('結果表示欄')),
+        ]),
       ),
     );
   }
