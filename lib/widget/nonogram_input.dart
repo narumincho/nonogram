@@ -17,73 +17,57 @@ class NonoGramInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 1,
-          child: Row(children: [
-            const Expanded(flex: 1, child: SizedBox()),
-            Expanded(
-              flex: 2,
-              child: DecoratedBox(
-                decoration: BoxDecoration(border: Border.all()),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    ...value.rowHints.map(
-                      (rowHint) => Expanded(
-                        flex: 1,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(border: Border.all()),
-                          child: const Text('H'),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ]),
+    return LayoutBuilder(builder: (context, constraints) {
+      const hintSizeRate = 0.3;
+      print('constraints: ${(
+        minWidth: constraints.minWidth,
+        maxWidth: constraints.maxWidth,
+        minHeight: constraints.minHeight,
+        maxHeight: constraints.maxHeight,
+      )}');
+      final size = min(constraints.maxWidth, constraints.maxHeight);
+      print('size: $size');
+      return Stack(children: [
+        Positioned(
+          left: size * hintSizeRate,
+          top: 0,
+          width: size * (1 - hintSizeRate),
+          height: size * hintSizeRate,
+          child: DecoratedBox(
+            decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
+            child: Text('列ヒント'),
+          ),
         ),
-        Expanded(
-          flex: 2,
-          child: Row(children: [
-            Expanded(
-              flex: 1,
-              child: DecoratedBox(
-                decoration: BoxDecoration(border: Border.all()),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    ...value.columnHints.map(
-                      (columnHint) => Expanded(
-                        flex: 1,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(border: Border.all()),
-                          child: const Text('H'),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: DecoratedBox(
-                decoration: BoxDecoration(border: Border.all()),
-                child: _CellsInput(
-                  cells: value.cells,
-                  onChanged: (newCells) {
-                    onChanged(value.copyWithCells(newCells));
-                  },
-                ),
-              ),
-            )
-          ]),
-        )
-      ],
-    );
+        Positioned(
+          left: 0,
+          top: size * hintSizeRate,
+          width: size * hintSizeRate,
+          height: size * (1 - hintSizeRate),
+          child: DecoratedBox(
+            decoration: BoxDecoration(border: Border.all()),
+            child: Text('行ヒント'),
+          ),
+        ),
+        Positioned(
+          left: size * hintSizeRate,
+          top: size * hintSizeRate,
+          width: size * (1 - hintSizeRate),
+          height: size * (1 - hintSizeRate),
+          child: DecoratedBox(
+            decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
+            child: Text('セル'),
+          ),
+        ),
+      ]);
+      SizedBox(
+        width: size,
+        height: size,
+        child: DecoratedBox(
+          decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
+          child: Text('input'),
+        ),
+      );
+    });
   }
 }
 
