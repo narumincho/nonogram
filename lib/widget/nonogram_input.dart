@@ -19,54 +19,76 @@ class NonoGramInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       const hintSizeRate = 0.3;
-      print('constraints: ${(
-        minWidth: constraints.minWidth,
-        maxWidth: constraints.maxWidth,
-        minHeight: constraints.minHeight,
-        maxHeight: constraints.maxHeight,
-      )}');
       final size = min(constraints.maxWidth, constraints.maxHeight);
-      print('size: $size');
       return Stack(children: [
+        // 横線
+        Positioned(
+          left: 0,
+          top: size * hintSizeRate - 1,
+          width: size,
+          height: 2,
+          child: const DecoratedBox(
+              decoration: BoxDecoration(color: Colors.black)),
+        ),
+        // 縦線
+        Positioned(
+          left: size * hintSizeRate - 1,
+          top: 0,
+          width: 2,
+          height: size,
+          child: const DecoratedBox(
+              decoration: BoxDecoration(color: Colors.black)),
+        ),
         Positioned(
           left: size * hintSizeRate,
           top: 0,
           width: size * (1 - hintSizeRate),
           height: size * hintSizeRate,
-          child: DecoratedBox(
-            decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
-            child: Text('列ヒント'),
-          ),
+          child: const Text('列ヒント'),
         ),
         Positioned(
           left: 0,
           top: size * hintSizeRate,
           width: size * hintSizeRate,
           height: size * (1 - hintSizeRate),
-          child: DecoratedBox(
-            decoration: BoxDecoration(border: Border.all()),
-            child: Text('行ヒント'),
-          ),
+          child: const Text('行ヒント'),
         ),
         Positioned(
           left: size * hintSizeRate,
           top: size * hintSizeRate,
           width: size * (1 - hintSizeRate),
           height: size * (1 - hintSizeRate),
-          child: DecoratedBox(
-            decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
-            child: Text('セル'),
+          child: const Text('セル'),
+        ),
+        // 横線
+        for (final (index, _) in value.rowHints.indexed)
+          Positioned(
+            left: 0,
+            top: size * hintSizeRate +
+                (1 + index) *
+                    (size * (1 - hintSizeRate) / (value.rowHints.length + 1)),
+            width: size,
+            height: (index + 1) % 5 == 0 ? 3 : 1,
+            child: const DecoratedBox(
+              decoration: BoxDecoration(color: Colors.black),
+            ),
           ),
-        ),
+        // 縦線
+        for (final (index, _) in value.columnHints.indexed)
+          Positioned(
+            left: size * hintSizeRate +
+                (1 + index) *
+                    (size *
+                        (1 - hintSizeRate) /
+                        (value.columnHints.length + 1)),
+            top: 0,
+            width: (index + 1) % 5 == 0 ? 3 : 1,
+            height: size,
+            child: const DecoratedBox(
+              decoration: BoxDecoration(color: Colors.black),
+            ),
+          ),
       ]);
-      SizedBox(
-        width: size,
-        height: size,
-        child: DecoratedBox(
-          decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
-          child: Text('input'),
-        ),
-      );
     });
   }
 }
