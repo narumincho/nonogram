@@ -11,7 +11,7 @@ class Nonogram {
 
   final IList<IList<int>> rowHints;
   final IList<IList<int>> columnHints;
-  final IList<IList<bool>> cells;
+  final IList<IList<Cell>> cells;
 
   static Nonogram empty(int rowSize, int columnSize) {
     return Nonogram._(
@@ -19,7 +19,7 @@ class Nonogram {
       columnHints: IList(List.generate(columnSize, (_) => const IList.empty())),
       cells: IList(List.generate(
         rowSize,
-        (_) => IList(List.generate(columnSize, (_) => false)),
+        (_) => IList(List.generate(columnSize, (_) => Cell.unknown)),
       )),
     );
   }
@@ -29,11 +29,24 @@ class Nonogram {
   int get columnSize => columnHints.length;
 
   // TODO validate
-  Nonogram copyWithCells(IList<IList<bool>> newCells) {
+  Nonogram copyWithCells(IList<IList<Cell>> newCells) {
     return Nonogram._(
       rowHints: rowHints,
       columnHints: columnHints,
       cells: newCells,
     );
   }
+
+  Nonogram replaceAt(int row, int column, Cell newCell) {
+    return copyWithCells(cells.replace(
+      row,
+      cells[row].replace(column, newCell),
+    ));
+  }
+}
+
+enum Cell {
+  empty,
+  filled,
+  unknown,
 }

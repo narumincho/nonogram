@@ -1,8 +1,6 @@
 import 'dart:math';
 
-import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:nonogram/nonogram.dart';
 
 class NonoGramInput extends StatelessWidget {
@@ -18,13 +16,14 @@ class NonoGramInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      const hintSizeRate = 0.3;
       final size = min(constraints.maxWidth, constraints.maxHeight);
+      final hintSize = size * 0.3;
+      final cellTableSize = size * 0.6;
       return Stack(children: [
         // 横線
         Positioned(
           left: 0,
-          top: size * hintSizeRate - 1,
+          top: hintSize - 1,
           width: size,
           height: 2,
           child: const DecoratedBox(
@@ -32,7 +31,7 @@ class NonoGramInput extends StatelessWidget {
         ),
         // 縦線
         Positioned(
-          left: size * hintSizeRate - 1,
+          left: hintSize - 1,
           top: 0,
           width: 2,
           height: size,
@@ -40,33 +39,25 @@ class NonoGramInput extends StatelessWidget {
               decoration: BoxDecoration(color: Colors.black)),
         ),
         Positioned(
-          left: size * hintSizeRate,
+          left: hintSize,
           top: 0,
-          width: size * (1 - hintSizeRate),
-          height: size * hintSizeRate,
+          width: size - hintSize,
+          height: hintSize,
           child: const Text('列ヒント'),
         ),
         Positioned(
           left: 0,
-          top: size * hintSizeRate,
-          width: size * hintSizeRate,
-          height: size * (1 - hintSizeRate),
+          top: hintSize,
+          width: hintSize,
+          height: size - hintSize,
           child: const Text('行ヒント'),
-        ),
-        Positioned(
-          left: size * hintSizeRate,
-          top: size * hintSizeRate,
-          width: size * (1 - hintSizeRate),
-          height: size * (1 - hintSizeRate),
-          child: const Text('セル'),
         ),
         // 横線
         for (final (index, _) in value.rowHints.indexed)
           Positioned(
             left: 0,
-            top: size * hintSizeRate +
-                (1 + index) *
-                    (size * (1 - hintSizeRate) / (value.rowHints.length + 1)),
+            top: hintSize +
+                (1 + index) * (cellTableSize / value.rowHints.length),
             width: size,
             height: (index + 1) % 5 == 0 ? 3 : 1,
             child: const DecoratedBox(
@@ -76,11 +67,8 @@ class NonoGramInput extends StatelessWidget {
         // 縦線
         for (final (index, _) in value.columnHints.indexed)
           Positioned(
-            left: size * hintSizeRate +
-                (1 + index) *
-                    (size *
-                        (1 - hintSizeRate) /
-                        (value.columnHints.length + 1)),
+            left: hintSize +
+                (1 + index) * (cellTableSize / value.columnHints.length),
             top: 0,
             width: (index + 1) % 5 == 0 ? 3 : 1,
             height: size,
@@ -88,28 +76,84 @@ class NonoGramInput extends StatelessWidget {
               decoration: BoxDecoration(color: Colors.black),
             ),
           ),
+        // セル
+        for (final (rowIndex, row) in value.cells.indexed)
+          for (final (columnIndex, cell) in row.indexed)
+            Positioned(
+              left: hintSize + columnIndex * (cellTableSize / value.columnSize),
+              top: hintSize + rowIndex * (cellTableSize / value.rowSize),
+              width: cellTableSize / value.columnSize,
+              height: cellTableSize / value.rowSize,
+              child: _CellInput(
+                cell: cell,
+                onChanged: (newCell) {
+                  onChanged(value.replaceAt(
+                    rowIndex,
+                    columnIndex,
+                    newCell,
+                  ));
+                },
+              ),
+            ),
       ]);
     });
   }
 }
 
-class _CellsInput extends StatelessWidget {
-  const _CellsInput({
+class _CellInput extends StatelessWidget {
+  const _CellInput({
     super.key,
-    required this.cells,
+    required this.cell,
     required this.onChanged,
   });
 
-  final IList<IList<bool>> cells;
-  final ValueChanged<IList<IList<bool>>> onChanged;
+  final Cell cell;
+  final ValueSetter<Cell> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(crossAxisCount: cells.length, children: [
-      ...List.generate(
-        cells.length * cells.map((row) => row.length).reduce(max),
-        (_) => DecoratedBox(decoration: BoxDecoration(border: Border.all())),
-      )
-    ]);
+    return GestureDetector(
+      onTapDown: (d) {
+        switch (cell) {
+          case Cell.empty:
+            onChanged(Cell.unknown);
+            break;
+          case Cell.filled:
+            onChanged(Cell.empty);
+            break;
+          case Cell.unknown:
+            onChanged(Cell.filled);
+            break;
+        }
+      },
+      onSecondaryTapDown: (d) {
+        switch (cell) {
+          case Cell.empty:
+            onChanged(Cell.unknown);
+            return;
+          case Cell.filled:
+          case Cell.unknown:
+            onChanged(Cell.empty);
+            return;
+        }
+      },
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: switch (cell) {
+            Cell.unknown => Colors.transparent,
+            Cell.filled => Colors.black,
+            Cell.empty => Colors.transparent,
+          },
+        ),
+        child: switch (cell) {
+          Cell.unknown => null,
+          Cell.filled => null,
+          Cell.empty => LayoutBuilder(
+              builder: (context, constraints) =>
+                  Icon(Icons.close, size: constraints.maxWidth),
+            ),
+        },
+      ),
+    );
   }
 }
