@@ -59,10 +59,83 @@ class Nonogram {
       cells: cells,
     );
   }
+
+  NonogramLine getLine(LineLocation location) {
+    final hints = location.direction == Direction.row
+        ? rowHints[location.index]
+        : columnHints[location.index];
+
+    return NonogramLine(
+      hints: hints,
+      cells: location.direction == Direction.row
+          ? cells[location.index]
+          : IList(
+              List.generate(
+                rowSize,
+                (index) => cells[index][location.index],
+              ),
+            ),
+    );
+  }
+
+  IList<LineLocation> indexes() {
+    return IList([
+      for (int i = 0; i < rowSize; i++)
+        LineLocation(direction: Direction.row, index: i),
+      for (int i = 0; i < columnSize; i++)
+        LineLocation(direction: Direction.column, index: i),
+    ]);
+  }
+
+  Iterable<T> map<T>(T Function(LineLocation, NonogramLine) func) {
+    return indexes().map((location) => func(location, getLine(location)));
+  }
 }
 
 enum Cell {
   empty,
   filled,
   unknown,
+}
+
+enum Direction {
+  row,
+  column,
+}
+
+@immutable
+class Step {
+  const Step({
+    required this.location,
+    required this.patterns,
+    required this.result,
+  });
+
+  final LineLocation location;
+  final IList<NonogramLine> patterns;
+  final NonogramLine result;
+}
+
+@immutable
+class LineLocation {
+  const LineLocation({
+    required this.direction,
+    required this.index,
+  });
+
+  final Direction direction;
+  final int index;
+}
+
+@immutable
+class NonogramLine {
+  const NonogramLine({
+    required this.hints,
+    required this.cells,
+  });
+
+  final IList<int> hints;
+  final IList<Cell> cells;
+
+  bool isComplete() => cells.every((cell) => cell != Cell.unknown);
 }

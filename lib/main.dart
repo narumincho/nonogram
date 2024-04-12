@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nonogram/nonogram.dart';
 import 'package:nonogram/widget/nonogram_input.dart';
+import 'package:nonogram/widget/step_list.dart';
 
 void main() {
   runApp(const NonogramApp());
@@ -39,9 +40,9 @@ class _NonogramAppState extends State<NonogramApp> {
               ),
             ),
           ),
-          const Expanded(
+          Expanded(
             flex: 1,
-            child: Text('結果表示欄'),
+            child: StepList(value: _nonogram),
           ),
         ]),
       ),
