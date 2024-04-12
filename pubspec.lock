@@ -139,6 +139,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.0"
+  narumincho_util:
+    dependency: "direct main"
+    description:
+      name: narumincho_util
+      sha256: daa9b3a513dd4cc1d8a988f76e6ef84be9208b05bb5ee7cef492664e55ea9eeb
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   path:
     dependency: transitive
     description:

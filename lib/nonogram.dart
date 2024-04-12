@@ -37,11 +37,19 @@ class Nonogram {
     );
   }
 
-  Nonogram replaceAt(int row, int column, Cell newCell) {
+  Nonogram replaceCellAt(int row, int column, Cell newCell) {
     return copyWithCells(cells.replace(
       row,
       cells[row].replace(column, newCell),
     ));
+  }
+
+  Nonogram replaceRowHintsAt(int index, IList<int> newHints) {
+    return Nonogram._(
+      rowHints: rowHints.replace(index, newHints),
+      columnHints: columnHints,
+      cells: cells,
+    );
   }
 }
 
