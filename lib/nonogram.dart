@@ -51,6 +51,14 @@ class Nonogram {
       cells: cells,
     );
   }
+
+  Nonogram replaceColumnHintsAt(int index, IList<int> newHints) {
+    return Nonogram._(
+      rowHints: rowHints,
+      columnHints: columnHints.replace(index, newHints),
+      cells: cells,
+    );
+  }
 }
 
 enum Cell {

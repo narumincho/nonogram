@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:narumincho_util/narumincho_util.dart';
 import 'package:nonogram/nonogram.dart';
+import 'package:nonogram/widget/column_hint_input.dart';
+import 'package:nonogram/widget/row_hint_input.dart';
 
 class NonoGramInput extends StatelessWidget {
   const NonoGramInput({
@@ -73,12 +75,10 @@ class NonoGramInput extends StatelessWidget {
             top: 0,
             width: cellTableSize / value.columnSize,
             height: hintSize,
-            child: TextField(
-              keyboardType: TextInputType.multiline,
-              maxLines: (value.columnSize / 2).ceil(),
-              textAlign: TextAlign.end,
-              onChanged: (value) {
-                print('value = $value');
+            child: ColumnHintInput(
+              value: hints,
+              onChanged: (newHints) {
+                onChanged(value.replaceColumnHintsAt(index, newHints));
               },
             ),
           ),
@@ -89,7 +89,7 @@ class NonoGramInput extends StatelessWidget {
             top: hintSize + index * (cellTableSize / value.rowSize),
             width: hintSize,
             height: cellTableSize / value.rowSize,
-            child: _RowHintInput(
+            child: RowHintInput(
               value: hints,
               onChanged: (newHints) {
                 onChanged(value.replaceRowHintsAt(index, newHints));
@@ -117,66 +117,6 @@ class NonoGramInput extends StatelessWidget {
             ),
       ]);
     });
-  }
-}
-
-class _RowHintInput extends StatefulWidget {
-  const _RowHintInput({
-    required this.value,
-    required this.onChanged,
-  });
-
-  final IList<int> value;
-  final ValueChanged<IList<int>> onChanged;
-
-  @override
-  State<_RowHintInput> createState() => _RowInputHintState();
-}
-
-class _RowInputHintState extends State<_RowHintInput> {
-  final _controller = TextEditingController();
-  final _focusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.text = widget.value.join(' ');
-    _focusNode.addListener(_onFocusChange);
-  }
-
-  @override
-  void didUpdateWidget(_RowHintInput oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.value != widget.value) {
-      _controller.text = widget.value.join(' ');
-    }
-  }
-
-  @override
-  void dispose() {
-    _focusNode.removeListener(_onFocusChange);
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  void _onFocusChange() {
-    if (!_focusNode.hasFocus) {
-      final values = _controller.text
-          .split(RegExp(r'[^0-9]'))
-          .mapAndRemoveNull((element) => int.tryParse(element))
-          .toIList();
-      widget.onChanged(values);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      keyboardType: TextInputType.number,
-      textAlign: TextAlign.end,
-      controller: _controller,
-      focusNode: _focusNode,
-    );
   }
 }
 
