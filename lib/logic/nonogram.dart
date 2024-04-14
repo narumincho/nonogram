@@ -82,17 +82,50 @@ class Nonogram {
     );
   }
 
+  Nonogram replaceCellsOnLine(LineLocation location, IList<Cell> cells) {
+    return Nonogram._(
+      rowHints: rowHints,
+      columnHints: columnHints,
+      cells: location.direction == Direction.row
+          ? this.cells.replace(location.index, cells)
+          : this
+              .cells
+              .zip(cells)
+              .map((tuple) => tuple.$1.replace(location.index, tuple.$2))
+              .toIList(),
+    );
+  }
+
   IList<LineLocation> indexes() {
     return IList([
-      for (int i = 0; i < rowSize; i++)
-        LineLocation(direction: Direction.row, index: i),
-      for (int i = 0; i < columnSize; i++)
-        LineLocation(direction: Direction.column, index: i),
+      ...List.generate(
+        rowSize,
+        (index) => LineLocation(direction: Direction.row, index: index),
+      ),
+      ...List.generate(
+        columnSize,
+        (index) => LineLocation(direction: Direction.column, index: index),
+      ),
     ]);
   }
 
-  Iterable<T> map<T>(T Function(LineLocation, NonogramLine) func) {
+  Iterable<T> map<T>(
+      T Function(LineLocation location, NonogramLine line) func) {
     return indexes().map((location) => func(location, getLine(location)));
+  }
+
+  ({Nonogram next, LineLocation location})? nextStep() {
+    final nextLocationAndCells = maxBy(
+      map((location, line) => (
+            location: location,
+            prev: line.cells,
+            next: createCommonPattern(
+              createPatterns(line.hints, line.cells.length),
+            )
+          )),
+      (tuple) => fillCount(tuple.prev, tuple.next),
+    );
+    nextLocationAndCells.next;
   }
 }
 
@@ -202,4 +235,14 @@ IList<Cell> createCommonPattern(ISet<IList<bool>> patterns) {
                 : Cell.unknown,
       )
       .toIList();
+}
+
+/// 埋めることができた数
+int fillCount(IList<Cell> previous, IList<Cell> current) {
+  return previous
+      .zip(current)
+      .where((tuple) =>
+          tuple.$1 == Cell.unknown &&
+          (tuple.$2 == Cell.filled || tuple.$2 == Cell.empty))
+      .length;
 }
