@@ -2,6 +2,7 @@ import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:nonogram/logic/nonogram.dart';
 import 'package:nonogram/widget/nonogram_input.dart';
+import 'package:nonogram/widget/nonogram_view.dart';
 
 class StepList extends StatefulWidget {
   const StepList({
@@ -65,9 +66,8 @@ class _StepListState extends State<StepList> {
             SizedBox(
               width: 256,
               height: 256,
-              child: NonoGramInput(
+              child: NonoGramView(
                 value: step.next,
-                onChanged: (value) {},
               ),
             ),
           ]);
@@ -79,10 +79,7 @@ class _StepListState extends State<StepList> {
             SizedBox(
               width: 256,
               height: 256,
-              child: NonoGramInput(
-                value: nonogram,
-                onChanged: (value) {},
-              ),
+              child: NonoGramView(value: nonogram),
             )
           ],
         );

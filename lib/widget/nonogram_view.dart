@@ -1,20 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:nonogram/logic/nonogram.dart';
-import 'package:nonogram/widget/column_hint_input.dart';
-import 'package:nonogram/widget/row_hint_input.dart';
 
-class NonoGramInput extends StatelessWidget {
-  const NonoGramInput({
+class NonoGramView extends StatelessWidget {
+  const NonoGramView({
     super.key,
     required this.value,
-    required this.onChanged,
   });
 
   final Nonogram value;
-  final ValueChanged<Nonogram> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -73,11 +68,9 @@ class NonoGramInput extends StatelessWidget {
             top: 0,
             width: cellTableSize / value.columnSize,
             height: hintSize,
-            child: ColumnHintInput(
-              value: hints,
-              onChanged: (newHints) {
-                onChanged(value.replaceColumnHintsAt(index, newHints));
-              },
+            child: Text(
+              hints.join('\n'),
+              style: TextStyle(fontSize: cellTableSize / value.columnSize),
             ),
           ),
         // 行ヒント
@@ -87,11 +80,11 @@ class NonoGramInput extends StatelessWidget {
             top: hintSize + index * (cellTableSize / value.rowSize),
             width: hintSize,
             height: cellTableSize / value.rowSize,
-            child: RowHintInput(
-              value: hints,
-              onChanged: (newHints) {
-                onChanged(value.replaceRowHintsAt(index, newHints));
-              },
+            child: Text(
+              hints.join(' '),
+              style: TextStyle(
+                fontSize: cellTableSize / value.rowSize,
+              ),
             ),
           ),
         // セル
@@ -102,76 +95,39 @@ class NonoGramInput extends StatelessWidget {
               top: hintSize + rowIndex * (cellTableSize / value.rowSize),
               width: cellTableSize / value.columnSize,
               height: cellTableSize / value.rowSize,
-              child: _CellInput(
-                cell: cell,
-                onChanged: (newCell) {
-                  onChanged(value.replaceCellAt(
-                    rowIndex,
-                    columnIndex,
-                    newCell,
-                  ));
-                },
-              ),
+              child: _CellView(cell: cell),
             ),
       ]);
     });
   }
 }
 
-class _CellInput extends StatelessWidget {
-  const _CellInput({
+class _CellView extends StatelessWidget {
+  const _CellView({
     super.key,
     required this.cell,
-    required this.onChanged,
   });
 
   final Cell cell;
-  final ValueSetter<Cell> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (d) {
-        switch (cell) {
-          case Cell.empty:
-            onChanged(Cell.unknown);
-            break;
-          case Cell.filled:
-            onChanged(Cell.empty);
-            break;
-          case Cell.unknown:
-            onChanged(Cell.filled);
-            break;
-        }
-      },
-      onSecondaryTapDown: (d) {
-        switch (cell) {
-          case Cell.empty:
-            onChanged(Cell.unknown);
-            return;
-          case Cell.filled:
-          case Cell.unknown:
-            onChanged(Cell.empty);
-            return;
-        }
-      },
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: switch (cell) {
-            Cell.unknown => Colors.transparent,
-            Cell.filled => Colors.black,
-            Cell.empty => Colors.transparent,
-          },
-        ),
-        child: switch (cell) {
-          Cell.unknown => null,
-          Cell.filled => null,
-          Cell.empty => LayoutBuilder(
-              builder: (context, constraints) =>
-                  Icon(Icons.close, size: constraints.maxWidth),
-            ),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: switch (cell) {
+          Cell.unknown => Colors.transparent,
+          Cell.filled => Colors.black,
+          Cell.empty => Colors.transparent,
         },
       ),
+      child: switch (cell) {
+        Cell.unknown => null,
+        Cell.filled => null,
+        Cell.empty => LayoutBuilder(
+            builder: (context, constraints) =>
+                Icon(Icons.close, size: constraints.maxWidth),
+          ),
+      },
     );
   }
 }
