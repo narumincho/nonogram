@@ -131,6 +131,14 @@ class Nonogram {
     if (nextLocationAndCells == null) {
       return null;
     }
+    if (fillCount(
+          getLine(nextLocationAndCells.location).cells,
+          nextLocationAndCells.next,
+        ) ==
+        0) {
+      return null;
+    }
+
     return (
       location: nextLocationAndCells.location,
       next: replaceCellsOnLine(
@@ -148,7 +156,10 @@ enum Cell {
 }
 
 enum Direction {
+  /// →
   row,
+
+  /// ↓
   column,
 }
 

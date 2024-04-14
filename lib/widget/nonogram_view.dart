@@ -7,9 +7,11 @@ class NonoGramView extends StatelessWidget {
   const NonoGramView({
     super.key,
     required this.value,
+    required this.location,
   });
 
   final Nonogram value;
+  final LineLocation location;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +20,33 @@ class NonoGramView extends StatelessWidget {
       final hintSize = size * 0.3;
       final cellTableSize = size * 0.6;
       return Stack(children: [
+        // 場所ハイライト
+        switch (location.direction) {
+          Direction.row => Positioned(
+              left: 0,
+              top: hintSize +
+                  location.index * (cellTableSize / value.rowHints.length),
+              width: size,
+              height: cellTableSize / value.rowHints.length,
+              child: const DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                ),
+              ),
+            ),
+          Direction.column => Positioned(
+              left: hintSize +
+                  location.index * (cellTableSize / value.columnHints.length),
+              top: 0,
+              width: cellTableSize / value.rowHints.length,
+              height: size,
+              child: const DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                ),
+              ),
+            ),
+        },
         // 横線
         Positioned(
           left: 0,

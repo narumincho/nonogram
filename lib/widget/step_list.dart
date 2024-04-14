@@ -1,7 +1,6 @@
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:nonogram/logic/nonogram.dart';
-import 'package:nonogram/widget/nonogram_input.dart';
 import 'package:nonogram/widget/nonogram_view.dart';
 
 class StepList extends StatefulWidget {
@@ -17,7 +16,8 @@ class StepList extends StatefulWidget {
 }
 
 class _StepListState extends State<StepList> {
-  IList<Nonogram> stateList = const IListConst([]);
+  IList<({Nonogram nonogram, LineLocation location})> stateList =
+      const IListConst([]);
 
   @override
   void initState() {
@@ -41,19 +41,19 @@ class _StepListState extends State<StepList> {
       itemCount: 1000,
       itemBuilder: (context, index) {
         if (stateList.length < index) {
-          return const SizedBox(
-            height: 128,
-            child: CircularProgressIndicator(),
-          );
+          return const SizedBox(height: 128);
         }
         final nonogram = stateList.getOrNull(index);
         if (nonogram == null) {
-          final lastNonogram = stateList.lastOrNull ?? widget.value;
+          final lastNonogram = stateList.lastOrNull?.nonogram ?? widget.value;
           final step = lastNonogram.nextStep();
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (step != null) {
               setState(() {
-                stateList = stateList.add(step.next);
+                stateList = stateList.add((
+                  nonogram: step.next,
+                  location: step.location,
+                ));
               });
             }
           });
@@ -68,6 +68,7 @@ class _StepListState extends State<StepList> {
               height: 256,
               child: NonoGramView(
                 value: step.next,
+                location: step.location,
               ),
             ),
           ]);
@@ -79,7 +80,10 @@ class _StepListState extends State<StepList> {
             SizedBox(
               width: 256,
               height: 256,
-              child: NonoGramView(value: nonogram),
+              child: NonoGramView(
+                value: nonogram.nonogram,
+                location: nonogram.location,
+              ),
             )
           ],
         );
