@@ -3,23 +3,25 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nonogram/logic/hint_number.dart';
 import 'package:nonogram/logic/nonogram.dart';
 
+import 'util.dart';
+
 void main() {
   test('size 0, hint []', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(const IListConst([]), 0),
       ISet(const [IListConst([])]),
     );
   });
 
   test('size 0, hint [1]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(IList([HintNumber.fromInt(1)]), 0),
       const ISetConst({}),
     );
   });
 
   test('size 1, hint []', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(const IListConst([]), 1),
       ISet(const [
         IListConst([false]),
@@ -28,7 +30,7 @@ void main() {
   });
 
   test('size 1, hint [1]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(IList([HintNumber.fromInt(1)]), 1),
       ISet(const [
         IListConst([true]),
@@ -37,14 +39,14 @@ void main() {
   });
 
   test('size 1, hint [2]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(IList([HintNumber.fromInt(2)]), 1),
       const ISetConst({}),
     );
   });
 
   test('size 2, hint []', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(const IListConst([]), 2),
       ISet(const [
         IListConst([false, false]),
@@ -53,7 +55,7 @@ void main() {
   });
 
   test('size 2, hint [1]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(IList([HintNumber.fromInt(1)]), 2),
       ISet(const [
         IListConst([true, false]),
@@ -63,7 +65,7 @@ void main() {
   });
 
   test('size 2, hint [2]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(IList([HintNumber.fromInt(2)]), 2),
       ISet(const [
         IListConst([true, true]),
@@ -72,14 +74,14 @@ void main() {
   });
 
   test('size 2, hint [3]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(IList([HintNumber.fromInt(3)]), 2),
       const ISetConst({}),
     );
   });
 
   test('size 2, hint [1, 1]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         IList([
           HintNumber.fromInt(1),
@@ -92,7 +94,7 @@ void main() {
   });
 
   test('size 3, hint []', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         const IListConst([]),
         3,
@@ -104,7 +106,7 @@ void main() {
   });
 
   test('size 3, hint [1]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         IList([
           HintNumber.fromInt(1),
@@ -120,7 +122,7 @@ void main() {
   });
 
   test('size 3, hint [2]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         IList([
           HintNumber.fromInt(2),
@@ -135,7 +137,7 @@ void main() {
   });
 
   test('size 3, hint [3]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         IList([HintNumber.fromInt(3)]),
         3,
@@ -147,7 +149,7 @@ void main() {
   });
 
   test('size 3, hint [1, 1]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         IList([HintNumber.fromInt(1), HintNumber.fromInt(1)]),
         3,
@@ -159,7 +161,7 @@ void main() {
   });
 
   test('size 3, hint [1, 2]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         IList([HintNumber.fromInt(1), HintNumber.fromInt(2)]),
         3,
@@ -169,7 +171,7 @@ void main() {
   });
 
   test('size 3, hint [4]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         IList([HintNumber.fromInt(4)]),
         3,
@@ -179,7 +181,7 @@ void main() {
   });
 
   test('size 4, hint [1, 1]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         IList([HintNumber.fromInt(1), HintNumber.fromInt(1)]),
         4,
@@ -193,7 +195,7 @@ void main() {
   });
 
   test('size 4, hint [1, 2]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         IList([HintNumber.fromInt(1), HintNumber.fromInt(2)]),
         4,
@@ -205,7 +207,7 @@ void main() {
   });
 
   test('size 4, hint [2, 1]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         IList([HintNumber.fromInt(2), HintNumber.fromInt(1)]),
         4,
@@ -217,7 +219,7 @@ void main() {
   });
 
   test('size 4, hint [1, 1, 1]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         IList([
           HintNumber.fromInt(1),
@@ -231,7 +233,7 @@ void main() {
   });
 
   test('size 10, hint [8]', () {
-    _sameTypeExpect<ISet<IList<bool>>>(
+    sameTypeExpect<ISet<IList<bool>>>(
       createPatterns(
         IList([HintNumber.fromInt(8)]),
         10,
@@ -249,8 +251,4 @@ void main() {
       ]),
     );
   });
-}
-
-void _sameTypeExpect<T>(T actual, T expected) {
-  expect(actual, expected);
 }

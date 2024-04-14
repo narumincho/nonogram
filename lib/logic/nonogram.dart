@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:nonogram/logic/hint_number.dart';
+import 'package:collection/collection.dart';
 
 @immutable
 class Nonogram {
@@ -189,4 +190,16 @@ ISet<IList<bool>> createPatterns(IList<HintNumber> hints, int size) {
 
 int getMinSizeByHints(IList<HintNumber> hints) {
   return max(hints.sumBy((hint) => hint.value) + hints.length - 1, 0);
+}
+
+IList<Cell> createCommonPattern(ISet<IList<bool>> patterns) {
+  return IterableZip(patterns)
+      .map(
+        (cells) => cells.every((cell) => cell)
+            ? Cell.filled
+            : cells.every((cell) => !cell)
+                ? Cell.empty
+                : Cell.unknown,
+      )
+      .toIList();
 }
