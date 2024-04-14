@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:nonogram/logic/nonogram.dart';
 import 'package:nonogram/widget/nonogram_input.dart';
+import 'package:nonogram/widget/size_input.dart';
 import 'package:nonogram/widget/step_list.dart';
 
 void main() {
@@ -26,22 +29,42 @@ class _NonogramAppState extends State<NonogramApp> {
           title: const Text('narumincho nonogram solver'),
         ),
         body: Row(children: [
-          Expanded(
-            flex: 1,
+          Flexible(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: NonoGramInput(
-                value: _nonogram,
-                onChanged: (value) {
-                  setState(() {
-                    _nonogram = value;
-                  });
-                },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: NonoGramInput(
+                      value: _nonogram,
+                      onChanged: (nonogram) {
+                        setState(() {
+                          _nonogram = nonogram;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizeInput(
+                    columnSize: _nonogram.columnSize,
+                    rowSize: _nonogram.rowSize,
+                    onColumnSizeChanged: (newColumnSize) {
+                      setState(() {
+                        _nonogram = _nonogram.setColumnSize(newColumnSize);
+                      });
+                    },
+                    onRowSizeChanged: (newRowSize) {
+                      setState(() {
+                        _nonogram = _nonogram.setRowSize(newRowSize);
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
           ),
-          Expanded(
-            flex: 1,
+          Flexible(
             child: StepList(value: _nonogram),
           ),
         ]),

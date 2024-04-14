@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
+import 'package:narumincho_util/narumincho_util.dart';
 import 'package:nonogram/logic/hint_number.dart';
 import 'package:collection/collection.dart';
 
@@ -31,6 +32,41 @@ class Nonogram {
   int get rowSize => rowHints.length;
 
   int get columnSize => columnHints.length;
+
+  Nonogram setRowSize(int size) {
+    final clampedSize = min(max(1, size), 256);
+    return Nonogram._(
+      rowHints: rowHints
+          .setMinLength(clampedSize, const IListConst([]))
+          .take(clampedSize)
+          .toIList(),
+      columnHints: columnHints,
+      cells: cells
+          .setMinLength(
+            clampedSize,
+            List.generate(columnSize, (index) => Cell.unknown).toIList(),
+          )
+          .take(clampedSize)
+          .toIList(),
+    );
+  }
+
+  Nonogram setColumnSize(int size) {
+    final clampedSize = min(max(1, size), 256);
+    return Nonogram._(
+      rowHints: rowHints,
+      columnHints: columnHints
+          .setMinLength(clampedSize, const IListConst([]))
+          .take(clampedSize)
+          .toIList(),
+      cells: cells
+          .map(
+            (cellLine) =>
+                cellLine.setMinLength(clampedSize, Cell.unknown).toIList(),
+          )
+          .toIList(),
+    );
+  }
 
   // TODO validate
   Nonogram copyWithCells(IList<IList<Cell>> newCells) {
