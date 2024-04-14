@@ -18,7 +18,7 @@ class NonoGramView extends StatelessWidget {
     return LayoutBuilder(builder: (context, constraints) {
       final size = min(constraints.maxWidth, constraints.maxHeight);
       final hintSize = size * 0.3;
-      final cellTableSize = size * 0.6;
+      final cellTableSize = size * 0.7;
       return Stack(children: [
         // 場所ハイライト
         switch (location.direction) {
@@ -93,13 +93,14 @@ class NonoGramView extends StatelessWidget {
         // 列ヒント
         for (final (index, hints) in value.columnHints.indexed)
           Positioned(
-            left: hintSize + index * (cellTableSize / value.columnSize),
+            right: (value.columnSize - (index + 1)) *
+                (cellTableSize / value.columnSize),
             top: 0,
-            width: cellTableSize / value.columnSize,
             height: hintSize,
             child: Text(
               hints.join('\n'),
               style: TextStyle(fontSize: cellTableSize / value.columnSize),
+              textAlign: TextAlign.right,
             ),
           ),
         // 行ヒント

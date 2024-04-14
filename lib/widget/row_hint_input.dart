@@ -38,8 +38,9 @@ class _RowInputHintState extends State<RowHintInput> {
 
   @override
   void dispose() {
-    _focusNode.removeListener(_onFocusChange);
-    _focusNode.dispose();
+    _focusNode
+      ..removeListener(_onFocusChange)
+      ..dispose();
     super.dispose();
   }
 

@@ -21,7 +21,7 @@ class NonoGramInput extends StatelessWidget {
     return LayoutBuilder(builder: (context, constraints) {
       final size = min(constraints.maxWidth, constraints.maxHeight);
       final hintSize = size * 0.3;
-      final cellTableSize = size * 0.6;
+      final cellTableSize = size * 0.7;
       return Stack(children: [
         // 横線
         Positioned(
