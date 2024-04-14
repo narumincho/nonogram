@@ -1,10 +1,8 @@
 import 'dart:math';
 
-import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:narumincho_util/narumincho_util.dart';
-import 'package:nonogram/nonogram.dart';
+import 'package:nonogram/logic/nonogram.dart';
 import 'package:nonogram/widget/column_hint_input.dart';
 import 'package:nonogram/widget/row_hint_input.dart';
 

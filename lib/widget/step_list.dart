@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/nonogram.dart';
+import 'package:nonogram/logic/nonogram.dart';
 
 class StepList extends StatefulWidget {
   const StepList({

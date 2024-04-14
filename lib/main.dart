@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/nonogram.dart';
+import 'package:nonogram/logic/nonogram.dart';
 import 'package:nonogram/widget/nonogram_input.dart';
 import 'package:nonogram/widget/step_list.dart';
 

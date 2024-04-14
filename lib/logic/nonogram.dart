@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
+import 'package:narumincho_util/narumincho_util.dart';
+import 'package:nonogram/logic/hint_number.dart';
 
 @immutable
 class Nonogram {
@@ -9,8 +13,8 @@ class Nonogram {
     required this.cells,
   });
 
-  final IList<IList<int>> rowHints;
-  final IList<IList<int>> columnHints;
+  final IList<IList<HintNumber>> rowHints;
+  final IList<IList<HintNumber>> columnHints;
   final IList<IList<Cell>> cells;
 
   static Nonogram empty(int rowSize, int columnSize) {
@@ -44,7 +48,7 @@ class Nonogram {
     ));
   }
 
-  Nonogram replaceRowHintsAt(int index, IList<int> newHints) {
+  Nonogram replaceRowHintsAt(int index, IList<HintNumber> newHints) {
     return Nonogram._(
       rowHints: rowHints.replace(index, newHints),
       columnHints: columnHints,
@@ -52,7 +56,7 @@ class Nonogram {
     );
   }
 
-  Nonogram replaceColumnHintsAt(int index, IList<int> newHints) {
+  Nonogram replaceColumnHintsAt(int index, IList<HintNumber> newHints) {
     return Nonogram._(
       rowHints: rowHints,
       columnHints: columnHints.replace(index, newHints),
@@ -134,8 +138,56 @@ class NonogramLine {
     required this.cells,
   });
 
-  final IList<int> hints;
+  final IList<HintNumber> hints;
   final IList<Cell> cells;
 
   bool isComplete() => cells.every((cell) => cell != Cell.unknown);
+}
+
+IList<IList<bool>> createPatterns(IList<HintNumber> hints, int size) {
+  if (size < 0) {
+    return const IListConst([]);
+  }
+  final minSize = getMinSizeByHints(hints);
+  if (size < minSize) {
+    return const IListConst([]);
+  }
+  final firstHint = hints.firstOrNull;
+  if (firstHint == null) {
+    return IList([
+      List.generate(size, (_) => false).toIList(),
+    ]);
+  }
+  final hintsTail = hints.tail.toIList();
+  if (hintsTail.isEmpty) {
+    return IList(
+      List.generate(
+        size - firstHint.value + 1,
+        (index) => IList([
+          ...List.generate(index, (index) => false),
+          ...List.generate(firstHint.value, (index) => true),
+          ...List.generate(size - (firstHint.value + index), (index) => false),
+        ]),
+      ),
+    );
+  }
+  return IList(
+    List.generate(
+        (size - (1 + getMinSizeByHints(hintsTail))) - firstHint.value + 1,
+        (index) => index).expand<IList<bool>>(
+      (index) =>
+          createPatterns(hintsTail, size - (firstHint.value + index)).map(
+        (tailPattern) => IList<bool>([
+          ...List.generate(index, (index) => false),
+          ...List.generate(firstHint.value, (index) => true),
+          false,
+          ...tailPattern,
+        ]),
+      ),
+    ),
+  );
+}
+
+int getMinSizeByHints(IList<HintNumber> hints) {
+  return max(hints.sumBy((hint) => hint.value) + hints.length - 1, 0);
 }

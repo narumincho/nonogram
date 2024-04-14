@@ -1,6 +1,7 @@
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:narumincho_util/narumincho_util.dart';
+import 'package:nonogram/logic/hint_number.dart';
 
 class RowHintInput extends StatefulWidget {
   const RowHintInput({
@@ -9,8 +10,8 @@ class RowHintInput extends StatefulWidget {
     required this.onChanged,
   });
 
-  final IList<int> value;
-  final ValueChanged<IList<int>> onChanged;
+  final IList<HintNumber> value;
+  final ValueChanged<IList<HintNumber>> onChanged;
 
   @override
   State<RowHintInput> createState() => _RowInputHintState();
@@ -45,8 +46,9 @@ class _RowInputHintState extends State<RowHintInput> {
   void _onFocusChange() {
     if (!_focusNode.hasFocus) {
       final values = _controller.text
-          .split(RegExp(r'[^0-9]'))
+          .split(RegExp('[^0-9]'))
           .mapAndRemoveNull((element) => int.tryParse(element))
+          .map((i) => HintNumber.fromInt(i))
           .toIList();
       widget.onChanged(values);
     }
