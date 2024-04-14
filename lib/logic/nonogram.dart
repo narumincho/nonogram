@@ -143,23 +143,23 @@ class NonogramLine {
   bool isComplete() => cells.every((cell) => cell != Cell.unknown);
 }
 
-IList<IList<bool>> createPatterns(IList<HintNumber> hints, int size) {
+ISet<IList<bool>> createPatterns(IList<HintNumber> hints, int size) {
   if (size < 0) {
-    return const IListConst([]);
+    return const ISetConst({});
   }
   final minSize = getMinSizeByHints(hints);
   if (size < minSize) {
-    return const IListConst([]);
+    return const ISetConst({});
   }
   final firstHint = hints.firstOrNull;
   if (firstHint == null) {
-    return IList([
+    return ISet({
       List.generate(size, (_) => false).toIList(),
-    ]);
+    });
   }
   final hintsTail = hints.tail.toIList();
   if (hintsTail.isEmpty) {
-    return IList(
+    return ISet(
       List.generate(
         size - firstHint.value + 1,
         (index) => IList([
@@ -170,7 +170,7 @@ IList<IList<bool>> createPatterns(IList<HintNumber> hints, int size) {
       ),
     );
   }
-  return IList(
+  return ISet(
     List.generate(
         (size - (1 + getMinSizeByHints(hintsTail))) - firstHint.value + 1,
         (index) => index).expand<IList<bool>>(
