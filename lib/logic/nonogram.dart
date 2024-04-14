@@ -86,13 +86,14 @@ class Nonogram {
     return Nonogram._(
       rowHints: rowHints,
       columnHints: columnHints,
-      cells: location.direction == Direction.row
-          ? this.cells.replace(location.index, cells)
-          : this
-              .cells
-              .zip(cells)
-              .map((tuple) => tuple.$1.replace(location.index, tuple.$2))
-              .toIList(),
+      cells: switch (location.direction) {
+        Direction.row => this.cells.replace(location.index, cells),
+        Direction.column => this
+            .cells
+            .zipU(cells)
+            .map((tuple) => tuple.$1.replace(location.index, tuple.$2))
+            .toIList(),
+      },
     );
   }
 
@@ -125,7 +126,16 @@ class Nonogram {
           )),
       (tuple) => fillCount(tuple.prev, tuple.next),
     );
-    nextLocationAndCells.next;
+    if (nextLocationAndCells == null) {
+      return null;
+    }
+    return (
+      location: nextLocationAndCells.location,
+      next: replaceCellsOnLine(
+        nextLocationAndCells.location,
+        nextLocationAndCells.next,
+      )
+    );
   }
 }
 
@@ -245,4 +255,14 @@ int fillCount(IList<Cell> previous, IList<Cell> current) {
           tuple.$1 == Cell.unknown &&
           (tuple.$2 == Cell.filled || tuple.$2 == Cell.empty))
       .length;
+}
+
+/// https://github.com/marcglasberg/fast_immutable_collections/pull/77
+/// がマージされるまでの処理
+extension Zip<T> on IList<T> {
+  Iterable<(T, U)> zipU<U>(Iterable<U> otherIterable) {
+    final other = otherIterable.toList();
+    final minLength = min(length, other.length);
+    return Iterable.generate(minLength, (index) => (this[index], other[index]));
+  }
 }
