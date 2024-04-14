@@ -121,7 +121,9 @@ class Nonogram {
             location: location,
             prev: line.cells,
             next: createCommonPattern(
-              createPatterns(line.hints, line.cells.length),
+              createPatterns(line.hints, line.cells.length)
+                  .where((element) => satisfyCells(element, line.cells))
+                  .toISet(),
             )
           )),
       (tuple) => fillCount(tuple.prev, tuple.next),
@@ -187,6 +189,7 @@ class NonogramLine {
   bool isComplete() => cells.every((cell) => cell != Cell.unknown);
 }
 
+/// ヒントからすべてのパターンを生成
 ISet<IList<bool>> createPatterns(IList<HintNumber> hints, int size) {
   if (size < 0) {
     return const ISetConst({});
@@ -231,10 +234,23 @@ ISet<IList<bool>> createPatterns(IList<HintNumber> hints, int size) {
   );
 }
 
+/// ヒントから最小のサイズを取得
 int getMinSizeByHints(IList<HintNumber> hints) {
   return max(hints.sumBy((hint) => hint.value) + hints.length - 1, 0);
 }
 
+/// パターンが条件を満たすか
+bool satisfyCells(IList<bool> target, IList<Cell> cells) {
+  return target.zipU(cells).every((tuple) => switch (tuple) {
+        (_, Cell.unknown) => true,
+        (true, Cell.filled) => true,
+        (false, Cell.filled) => false,
+        (true, Cell.empty) => false,
+        (false, Cell.empty) => true,
+      });
+}
+
+/// パターンから共通のパターンを生成
 IList<Cell> createCommonPattern(ISet<IList<bool>> patterns) {
   return IterableZip(patterns)
       .map(
