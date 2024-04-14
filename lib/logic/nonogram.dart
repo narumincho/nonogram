@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
-import 'package:narumincho_util/narumincho_util.dart';
 import 'package:nonogram/logic/hint_number.dart';
 
 @immutable
@@ -176,7 +175,7 @@ IList<IList<bool>> createPatterns(IList<HintNumber> hints, int size) {
         (size - (1 + getMinSizeByHints(hintsTail))) - firstHint.value + 1,
         (index) => index).expand<IList<bool>>(
       (index) =>
-          createPatterns(hintsTail, size - (firstHint.value + index)).map(
+          createPatterns(hintsTail, size - (firstHint.value + 1 + index)).map(
         (tailPattern) => IList<bool>([
           ...List.generate(index, (index) => false),
           ...List.generate(firstHint.value, (index) => true),
