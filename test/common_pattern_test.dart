@@ -1,6 +1,5 @@
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nonogram/logic/hint_number.dart';
 import 'package:nonogram/logic/nonogram.dart';
 
 import 'util.dart';
