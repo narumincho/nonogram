@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nonogram/env.dart';
 import 'package:nonogram/logic/nonogram.dart';
 import 'package:nonogram/widget/nonogram_input.dart';
 import 'package:nonogram/widget/size_input.dart';
@@ -31,7 +32,9 @@ class _NonogramAppState extends State<NonogramApp> {
           title: const Text('narumincho nonogram solver'),
           actions: [
             Link(
-              uri: Uri.parse('https://github.com/narumincho/nonogram'),
+              uri: Uri.parse(commitSha.isEmpty
+                  ? 'https://github.com/narumincho/nonogram'
+                  : 'https://github.com/narumincho/nonogram/tree/$commitSha'),
               builder: (context, followLink) => IconButton(
                 icon: const Icon(SimpleIcons.github),
                 onPressed: followLink,
