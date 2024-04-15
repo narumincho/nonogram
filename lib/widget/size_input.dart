@@ -19,21 +19,29 @@ class SizeInput extends StatefulWidget {
 }
 
 class _SizeInputState extends State<SizeInput> {
-  final TextEditingController _controllerColumnSize = TextEditingController();
+  final _controllerColumnSize = TextEditingController();
   final _controllerRowSize = TextEditingController();
+  final _focusNodeColumnSize = FocusNode();
+  final _focusNodeRowSize = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _controllerColumnSize.text = widget.columnSize.toString();
     _controllerRowSize.text = widget.rowSize.toString();
-    _controllerColumnSize.addListener(() {
+    _focusNodeColumnSize.addListener(() {
+      if (_focusNodeColumnSize.hasFocus) {
+        return;
+      }
       final newColumnSize = int.tryParse(_controllerColumnSize.text);
       if (newColumnSize != null) {
         widget.onColumnSizeChanged(newColumnSize);
       }
     });
-    _controllerRowSize.addListener(() {
+    _focusNodeRowSize.addListener(() {
+      if (_focusNodeRowSize.hasFocus) {
+        return;
+      }
       final newRowSize = int.tryParse(_controllerRowSize.text);
       if (newRowSize != null) {
         widget.onRowSizeChanged(newRowSize);
@@ -69,6 +77,7 @@ class _SizeInputState extends State<SizeInput> {
           decoration: const InputDecoration(
             labelText: 'Column Size',
           ),
+          focusNode: _focusNodeColumnSize,
         ),
       ),
       const SizedBox(width: 16),
@@ -79,6 +88,7 @@ class _SizeInputState extends State<SizeInput> {
           decoration: const InputDecoration(
             labelText: 'Row Size',
           ),
+          focusNode: _focusNodeRowSize,
         ),
       ),
     ]);
