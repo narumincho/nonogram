@@ -21,7 +21,7 @@ jobs:
           flutter-version: ${{ steps.fvm-config-action.outputs.FLUTTER_VERSION }}
           channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
           cache: true
-      - run: flutter build web
+      - run: flutter build web --dart-define=COMMIT_SHA=${{ github.sha }}
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@1
         with:
