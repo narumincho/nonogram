@@ -1,0 +1,23 @@
+name: test
+
+on:
+  pull_request:
+    branches-ignore:
+      - main
+
+jobs:
+  build-and-deploy:
+    name: build and deploy
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: kuhnroyal/flutter-fvm-config-action@v2
+        id: fvm-config-action
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm-config-action.outputs.FLUTTER_VERSION }}
+          channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
+          cache: true
+      - run: flutter test
+      - name: Analyze Flutter
+        uses: ValentinVignal/action-dart-analyze@v0.16
