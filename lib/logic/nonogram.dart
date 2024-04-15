@@ -20,11 +20,11 @@ class Nonogram {
 
   static Nonogram empty(int rowSize, int columnSize) {
     return Nonogram._(
-      rowHints: IList(List.generate(rowSize, (_) => const IList.empty())),
-      columnHints: IList(List.generate(columnSize, (_) => const IList.empty())),
-      cells: IList(List.generate(
+      rowHints: IList(List.filled(rowSize, const IList.empty())),
+      columnHints: IList(List.filled(columnSize, const IList.empty())),
+      cells: IList(List.filled(
         rowSize,
-        (_) => IList(List.generate(columnSize, (_) => Cell.unknown)),
+        IList(List.filled(columnSize, Cell.unknown)),
       )),
     );
   }
@@ -36,17 +36,13 @@ class Nonogram {
   Nonogram setRowSize(int size) {
     final clampedSize = min(max(1, size), 256);
     return Nonogram._(
-      rowHints: rowHints
-          .setMinLength(clampedSize, const IListConst([]))
-          .take(clampedSize)
-          .toIList(),
+      rowHints: rowHints.setLength(clampedSize, const IListConst([])).toIList(),
       columnHints: columnHints,
       cells: cells
-          .setMinLength(
+          .setLength(
             clampedSize,
-            List.generate(columnSize, (index) => Cell.unknown).toIList(),
+            List.filled(columnSize, Cell.unknown).toIList(),
           )
-          .take(clampedSize)
           .toIList(),
     );
   }
@@ -55,14 +51,12 @@ class Nonogram {
     final clampedSize = min(max(1, size), 256);
     return Nonogram._(
       rowHints: rowHints,
-      columnHints: columnHints
-          .setMinLength(clampedSize, const IListConst([]))
-          .take(clampedSize)
-          .toIList(),
+      columnHints:
+          columnHints.setLength(clampedSize, const IListConst([])).toIList(),
       cells: cells
           .map(
             (cellLine) =>
-                cellLine.setMinLength(clampedSize, Cell.unknown).toIList(),
+                cellLine.setLength(clampedSize, Cell.unknown).toIList(),
           )
           .toIList(),
     );
@@ -248,7 +242,7 @@ ISet<IList<bool>> createPatterns(IList<HintNumber> hints, int size) {
   final firstHint = hints.firstOrNull;
   if (firstHint == null) {
     return ISet({
-      List.generate(size, (_) => false).toIList(),
+      List.filled(size, false).toIList(),
     });
   }
   final hintsTail = hints.tail.toIList();
@@ -257,9 +251,9 @@ ISet<IList<bool>> createPatterns(IList<HintNumber> hints, int size) {
       List.generate(
         size - firstHint.value + 1,
         (index) => IList([
-          ...List.generate(index, (index) => false),
-          ...List.generate(firstHint.value, (index) => true),
-          ...List.generate(size - (firstHint.value + index), (index) => false),
+          ...List.filled(index, false),
+          ...List.filled(firstHint.value, true),
+          ...List.filled(size - (firstHint.value + index), false),
         ]),
       ),
     );
@@ -271,8 +265,8 @@ ISet<IList<bool>> createPatterns(IList<HintNumber> hints, int size) {
       (index) =>
           createPatterns(hintsTail, size - (firstHint.value + 1 + index)).map(
         (tailPattern) => IList<bool>([
-          ...List.generate(index, (index) => false),
-          ...List.generate(firstHint.value, (index) => true),
+          ...List.filled(index, false),
+          ...List.filled(firstHint.value, true),
           false,
           ...tailPattern,
         ]),
