@@ -5,7 +5,7 @@ on:
 
 jobs:
   build-windows:
-    runs-on: ubuntu-22.04
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: kuhnroyal/flutter-fvm-config-action@v2
