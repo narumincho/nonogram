@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   build-and-deploy:
-    name: build and deploy
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4

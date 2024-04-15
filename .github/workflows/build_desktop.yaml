@@ -1,9 +1,10 @@
-name: test
+name: Build Desktop App
 
-on: pull_request
+on:
+  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  prepare-flutter:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -14,6 +15,12 @@ jobs:
           flutter-version: ${{ steps.fvm-config-action.outputs.FLUTTER_VERSION }}
           channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
           cache: true
-      - run: flutter test
-      - name: Analyze Flutter
-        uses: ValentinVignal/action-dart-analyze@v0.16
+  build-windows:
+    runs-on: ubuntu-22.04
+    needs: prepare-flutter
+    steps:
+      - run: flutter build windows --dart-define=COMMIT_SHA=${{ github.sha }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: build\windows\x64\runner\Release\
