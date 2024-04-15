@@ -14,3 +14,11 @@ https://nonogram.narumincho.com/
 不成立な問題など, たまに解けない問題もあります.
 
 成立する問題なのに解けない場合など問題点があれば issues で報告してもらえると助かります
+
+# 開発メモ
+
+## アイコン画像の生成
+
+```sh
+flutter pub run flutter_launcher_icons
+```
