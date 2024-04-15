@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -27,7 +28,7 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png" />
 
   <title>nonogram</title>
   <link rel="manifest" href="manifest.json">
@@ -39,16 +40,69 @@
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
 </head>
+
 <body>
+  <div id="flutterLoadingIndicatorContainer">
+    <style>
+      html {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        height: 100%;
+        background-color: #fff;
+      }
+
+      #flutterLoadingIndicatorContainer {
+        height: 100%;
+        display: grid;
+      }
+
+      #flutterLoadingIndicator {
+        width: 64px;
+        height: 64px;
+        background-color: #fff;
+        stroke: #000;
+        place-self: center;
+        animation: rotation 2s infinite linear;
+      }
+
+      @keyframes rotation {
+        from {
+          transform: rotate(0deg);
+        }
+
+        to {
+          transform: rotate(359deg);
+        }
+      }
+
+      @media(prefers-color-scheme: dark) {
+        body {
+          background-color: #000;
+        }
+
+        #flutterLoadingIndicator {
+          background-color: #000;
+          stroke: #fff;
+        }
+      }
+    </style>
+
+    <svg id="flutterLoadingIndicator" viewBox="-100 -100 200 200">
+      <path d="M 78,45 a 90 90 30 1 1 0,-90" stroke-width="10" fill="none"></path>
+    </svg>
+  </div>
   <script>
-    window.addEventListener('load', function(ev) {
+    window.addEventListener('load', function (ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
         },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
+        onEntrypointLoaded: function (engineInitializer) {
+          engineInitializer.initializeEngine().then(function (appRunner) {
             appRunner.runApp();
           });
         }
@@ -56,4 +110,5 @@
     });
   </script>
 </body>
+
 </html>

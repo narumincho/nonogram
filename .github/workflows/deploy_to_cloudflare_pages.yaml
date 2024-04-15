@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  deployments: write
+
 jobs:
   build-and-deploy:
     name: build and deploy
