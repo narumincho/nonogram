@@ -16,13 +16,13 @@ class StepList extends StatefulWidget {
 }
 
 class _StepListState extends State<StepList> {
-  IList<({Nonogram nonogram, LineLocation location})> stateList =
+  IList<({Nonogram nonogram, LineLocation location})> stepList =
       const IListConst([]);
 
   @override
   void initState() {
     super.initState();
-    stateList = const IListConst([]);
+    stepList = const IListConst([]);
   }
 
   @override
@@ -30,7 +30,7 @@ class _StepListState extends State<StepList> {
     super.didUpdateWidget(oldWidget);
     if (widget.value != oldWidget.value) {
       setState(() {
-        stateList = const IListConst([]);
+        stepList = const IListConst([]);
       });
     }
   }
@@ -38,19 +38,20 @@ class _StepListState extends State<StepList> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 1000,
+      itemCount: stepList.length + 1,
       itemBuilder: (context, index) {
-        if (stateList.length < index) {
+        if (stepList.length < index) {
           return const SizedBox(height: 128);
         }
-        final nonogram = stateList.getOrNull(index);
+        final nonogram = stepList.getOrNull(index);
         if (nonogram == null) {
-          final lastNonogram = stateList.lastOrNull?.nonogram ?? widget.value;
+          // 次のステップを計算
+          final lastNonogram = stepList.lastOrNull?.nonogram ?? widget.value;
           final step = lastNonogram.nextStep();
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (step != null) {
               setState(() {
-                stateList = stateList.add((
+                stepList = stepList.add((
                   nonogram: step.next,
                   location: step.location,
                 ));

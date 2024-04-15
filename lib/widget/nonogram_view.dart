@@ -99,7 +99,9 @@ class NonoGramView extends StatelessWidget {
             height: hintSize,
             child: Text(
               hints.join('\n'),
-              style: TextStyle(fontSize: cellTableSize / value.columnSize),
+              overflow: TextOverflow.fade,
+              style: TextStyle(
+                  fontSize: cellTableSize / value.columnSize, height: 1),
               textAlign: TextAlign.right,
             ),
           ),
@@ -112,7 +114,9 @@ class NonoGramView extends StatelessWidget {
             height: cellTableSize / value.rowSize,
             child: Text(
               hints.join(' '),
+              textAlign: TextAlign.right,
               style: TextStyle(
+                height: 1,
                 fontSize: cellTableSize / value.rowSize,
               ),
             ),
