@@ -5,6 +5,8 @@ import 'package:nonogram/logic/nonogram.dart';
 import 'package:nonogram/widget/nonogram_input.dart';
 import 'package:nonogram/widget/size_input.dart';
 import 'package:nonogram/widget/step_list.dart';
+import 'package:simple_icons/simple_icons.dart';
+import 'package:url_launcher/link.dart';
 
 void main() {
   runApp(const NonogramApp());
@@ -27,6 +29,15 @@ class _NonogramAppState extends State<NonogramApp> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('narumincho nonogram solver'),
+          actions: [
+            Link(
+              uri: Uri.parse('https://github.com/narumincho/nonogram'),
+              builder: (context, followLink) => IconButton(
+                icon: const Icon(SimpleIcons.github),
+                onPressed: followLink,
+              ),
+            )
+          ],
         ),
         body: Row(children: [
           Flexible(
