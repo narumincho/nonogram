@@ -62,12 +62,14 @@ class Nonogram {
     );
   }
 
-  // TODO validate
   Nonogram copyWithCells(IList<IList<Cell>> newCells) {
     return Nonogram._(
       rowHints: rowHints,
       columnHints: columnHints,
-      cells: newCells,
+      cells: newCells
+          .take(rowSize)
+          .map((row) => row.sublist(0, columnSize))
+          .toIList(),
     );
   }
 
@@ -176,6 +178,28 @@ class Nonogram {
         nextLocationAndCells.next,
       )
     );
+  }
+
+  /// すべてのセルが条件を満たして埋まっているか
+  bool isComplete() {
+    for (final location in indexes()) {
+      final line = getLine(location);
+      final cellsAsBool = line.cells
+          .map((cell) => switch (cell) {
+                Cell.empty => false,
+                Cell.filled => true,
+                Cell.unknown => null,
+              })
+          .allNonNullOrNull();
+      if (cellsAsBool == null) {
+        return false;
+      }
+      if (!createPatterns(line.hints, line.cells.length)
+          .contains(cellsAsBool)) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 

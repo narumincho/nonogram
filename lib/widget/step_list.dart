@@ -59,7 +59,10 @@ class _StepListState extends State<StepList> {
             }
           });
           if (step == null) {
-            return const Text('終了');
+            if ((stepList.lastOrNull?.nonogram ?? widget.value).isComplete()) {
+              return const Text('solved!', textAlign: TextAlign.center);
+            }
+            return const Text("couldn't solve it", textAlign: TextAlign.center);
           }
           return Column(children: [
             const SizedBox(height: 16),
