@@ -24,7 +24,6 @@ jobs:
           --name windows
           --path ./build/windows/x64/runner/Release
           --githubToken ${{ secrets.GITHUB_TOKEN }}
-          --githubRepositoryOwner ${{ github.repository_owner }}
   build-macos:
     runs-on: macos-latest
     steps:
@@ -44,4 +43,3 @@ jobs:
           --name macos
           --path ./build
           --githubToken ${{ secrets.GITHUB_TOKEN }}
-          --githubRepositoryOwner ${{ github.repository_owner }}

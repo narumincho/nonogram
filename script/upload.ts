@@ -2,7 +2,7 @@ import { getOctokit } from "npm:@actions/github";
 import { Command } from "jsr:@cliffy/command@1.0.0-rc.4";
 import { join, parse } from "jsr:@std/path";
 import { walk } from "jsr:@std/fs";
-import { ZipWriter } from "jsr:@zip-js/zip-js";
+// import { ZipWriter } from "jsr:@zip-js/zip-js";
 
 const isDirectory = async (path: string): Promise<boolean> => {
   const fileName = parse(path).base;
@@ -42,33 +42,30 @@ await new Command()
     "--githubToken=<value>",
     "",
     { required: true },
-  ).option(
-    "--githubRepositoryOwner=<value>",
+  ).env(
+    "GITHUB_REPOSITORY=<value>",
     "",
     { required: true },
-  ).option(
-    "--githubRepositoryName=<value>",
-    "",
-    { required: false },
   )
   .action(
     async (
       {
         githubToken,
-        githubRepositoryOwner,
-        githubRepositoryName,
+        githubRepository,
         releaseId,
         name,
         path,
       },
     ) => {
-      console.log("githubRepositoryName", githubRepositoryName);
-      console.log("env", Deno.env.toObject());
+      const [githubRepositoryOwner, githubRepositoryName] = githubRepository
+        .split(
+          "/",
+        );
       const octokit = getOctokit(githubToken);
 
       const assets = await octokit.rest.repos.listReleaseAssets({
         owner: githubRepositoryOwner,
-        repo: githubRepositoryName ?? "unknown",
+        repo: githubRepositoryName,
         release_id: releaseId,
       });
       const asset = assets.data.find((asset) => asset.name === name);
@@ -76,12 +73,12 @@ await new Command()
         await octokit.rest.repos.deleteReleaseAsset({
           asset_id: asset.id,
           owner: githubRepositoryOwner,
-          repo: githubRepositoryName ?? "unknown",
+          repo: githubRepositoryName,
         });
       }
       await octokit.rest.repos.uploadReleaseAsset({
         owner: githubRepositoryOwner,
-        repo: githubRepositoryName ?? "unknown",
+        repo: githubRepositoryName,
         release_id: releaseId,
         name,
         data: await getFileContentOrZippedDir(path) as unknown as string,
