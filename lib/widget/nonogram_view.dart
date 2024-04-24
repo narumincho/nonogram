@@ -1,17 +1,23 @@
 import 'dart:math';
 
+import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:nonogram/logic/nonogram.dart';
+
+enum HightLightType {
+  update,
+  error,
+}
 
 class NonoGramView extends StatelessWidget {
   const NonoGramView({
     super.key,
     required this.value,
-    required this.location,
+    required this.heightLights,
   });
 
   final Nonogram value;
-  final LineLocation location;
+  final ISet<({LineLocation location, HightLightType type})> heightLights;
 
   @override
   Widget build(BuildContext context) {
@@ -21,32 +27,17 @@ class NonoGramView extends StatelessWidget {
       final cellTableSize = size * 0.7;
       return Stack(children: [
         // 場所ハイライト
-        switch (location.direction) {
-          Direction.row => Positioned(
-              left: 0,
-              top: hintSize +
-                  location.index * (cellTableSize / value.rowHints.length),
-              width: size,
-              height: cellTableSize / value.rowHints.length,
-              child: const DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.orange,
-                ),
-              ),
-            ),
-          Direction.column => Positioned(
-              left: hintSize +
-                  location.index * (cellTableSize / value.columnHints.length),
-              top: 0,
-              width: cellTableSize / value.rowHints.length,
-              height: size,
-              child: const DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.orange,
-                ),
-              ),
-            ),
-        },
+        for (final heightLight in heightLights)
+          _hightLight(
+            location: heightLight.location,
+            cellTableSize: cellTableSize,
+            hintSize: hintSize,
+            size: size,
+            color: switch (heightLight.type) {
+              HightLightType.update => Colors.orange,
+              HightLightType.error => Colors.red,
+            },
+          ),
         // 横線
         Positioned(
           left: 0,
@@ -133,6 +124,43 @@ class NonoGramView extends StatelessWidget {
             ),
       ]);
     });
+  }
+
+  Widget _hightLight({
+    required double hintSize,
+    required double cellTableSize,
+    required double size,
+    required LineLocation location,
+    required Color color,
+  }) {
+    switch (location.direction) {
+      case Direction.row:
+        return Positioned(
+          left: 0,
+          top: hintSize +
+              location.index * (cellTableSize / value.rowHints.length),
+          width: size,
+          height: cellTableSize / value.rowHints.length,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: color,
+            ),
+          ),
+        );
+      case Direction.column:
+        return Positioned(
+          left: hintSize +
+              location.index * (cellTableSize / value.columnHints.length),
+          top: 0,
+          width: cellTableSize / value.rowHints.length,
+          height: size,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: color,
+            ),
+          ),
+        );
+    }
   }
 }
 
