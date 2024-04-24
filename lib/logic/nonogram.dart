@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:narumincho_util/narumincho_util.dart';
 import 'package:nonogram/logic/hint_number.dart';
 import 'package:collection/collection.dart';
+import 'package:nonogram/logic/result.dart';
+
+typedef StepResult
+    = Result<({LineLocation location, Nonogram next})?, ISet<LineLocation>>;
 
 @immutable
 class Nonogram {
@@ -62,12 +66,14 @@ class Nonogram {
     );
   }
 
-  // TODO validate
   Nonogram copyWithCells(IList<IList<Cell>> newCells) {
     return Nonogram._(
       rowHints: rowHints,
       columnHints: columnHints,
-      cells: newCells,
+      cells: newCells
+          .take(rowSize)
+          .map((row) => row.sublist(0, columnSize))
+          .toIList(),
     );
   }
 
@@ -145,37 +151,69 @@ class Nonogram {
     return indexes().map((location) => func(location, getLine(location)));
   }
 
-  ({Nonogram next, LineLocation location})? nextStep() {
+  StepResult nextStep() {
+    final prevAndNextLocations = map((location, line) => (
+          location: location,
+          prev: line.cells,
+          next: createCommonPattern(
+            createPatterns(line.hints, line.cells.length)
+                .where((element) => satisfyCells(element, line.cells))
+                .toISet(),
+          )
+        ));
+
+    if (prevAndNextLocations.any((lineResult) => lineResult.next.isEmpty)) {
+      return Error(
+        value: prevAndNextLocations
+            .where((lineResult) => lineResult.next.isEmpty)
+            .map((lineResult) => lineResult.location)
+            .toISet(),
+      );
+    }
     final nextLocationAndCells = maxBy(
-      map((location, line) => (
-            location: location,
-            prev: line.cells,
-            next: createCommonPattern(
-              createPatterns(line.hints, line.cells.length)
-                  .where((element) => satisfyCells(element, line.cells))
-                  .toISet(),
-            )
-          )),
-      (tuple) => fillCount(tuple.prev, tuple.next),
+      prevAndNextLocations,
+      (lineResult) => fillCount(lineResult.prev, lineResult.next),
     );
     if (nextLocationAndCells == null) {
-      return null;
+      return const Ok(value: null);
     }
     if (fillCount(
           getLine(nextLocationAndCells.location).cells,
           nextLocationAndCells.next,
         ) ==
         0) {
-      return null;
+      return const Ok(value: null);
     }
 
-    return (
+    return Ok(value: (
       location: nextLocationAndCells.location,
       next: replaceCellsOnLine(
         nextLocationAndCells.location,
         nextLocationAndCells.next,
       )
-    );
+    ));
+  }
+
+  /// すべてのセルが条件を満たして埋まっているか
+  bool isComplete() {
+    for (final location in indexes()) {
+      final line = getLine(location);
+      final cellsAsBool = line.cells
+          .map((cell) => switch (cell) {
+                Cell.empty => false,
+                Cell.filled => true,
+                Cell.unknown => null,
+              })
+          .allNonNullOrNull();
+      if (cellsAsBool == null) {
+        return false;
+      }
+      if (!createPatterns(line.hints, line.cells.length)
+          .contains(cellsAsBool)) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 
@@ -295,9 +333,9 @@ bool satisfyCells(IList<bool> target, IList<Cell> cells) {
 IList<Cell> createCommonPattern(ISet<IList<bool>> patterns) {
   return IterableZip(patterns)
       .map(
-        (cells) => cells.every((cell) => cell)
+        (cells) => cells.everyIs(true)
             ? Cell.filled
-            : cells.every((cell) => !cell)
+            : cells.everyIs(false)
                 ? Cell.empty
                 : Cell.unknown,
       )
