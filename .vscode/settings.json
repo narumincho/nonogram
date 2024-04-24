@@ -1,4 +1,14 @@
 {
   "dart.flutterSdkPath": ".fvm/versions/3.19.4",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "deno.enable": true,
+  "[jsonc]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  }
 }
