@@ -26,11 +26,7 @@ const getFileContentOrZippedDir = async (path: string): Promise<Uint8Array> => {
 };
 
 await new Command()
-  .env(
-    "GITHUB_REPOSITORY_OWNER=<value>",
-    "",
-    { required: true },
-  ).env("GITHUB_REPOSITORY_NAME=<value>", "", { required: true }).option(
+  .option(
     "--releaseId=<value:integer>",
     "database id of the release.",
     { required: true },
@@ -46,6 +42,14 @@ await new Command()
     "--githubToken=<value>",
     "",
     { required: true },
+  ).option(
+    "--githubRepositoryOwner=<value>",
+    "",
+    { required: true },
+  ).option(
+    "--githubRepositoryName=<value>",
+    "",
+    { required: false },
   )
   .action(
     async (
@@ -58,11 +62,13 @@ await new Command()
         path,
       },
     ) => {
+      console.log("githubRepositoryName", githubRepositoryName);
+      console.log("env", Deno.env.toObject());
       const octokit = getOctokit(githubToken);
 
       const assets = await octokit.rest.repos.listReleaseAssets({
         owner: githubRepositoryOwner,
-        repo: githubRepositoryName,
+        repo: githubRepositoryName ?? "unknown",
         release_id: releaseId,
       });
       const asset = assets.data.find((asset) => asset.name === name);
@@ -70,12 +76,12 @@ await new Command()
         await octokit.rest.repos.deleteReleaseAsset({
           asset_id: asset.id,
           owner: githubRepositoryOwner,
-          repo: githubRepositoryName,
+          repo: githubRepositoryName ?? "unknown",
         });
       }
       await octokit.rest.repos.uploadReleaseAsset({
         owner: githubRepositoryOwner,
-        repo: githubRepositoryName,
+        repo: githubRepositoryName ?? "unknown",
         release_id: releaseId,
         name,
         data: await getFileContentOrZippedDir(path) as unknown as string,
