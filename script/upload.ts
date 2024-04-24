@@ -4,10 +4,6 @@ import { join, parse } from "jsr:@std/path";
 import { walk } from "jsr:@std/fs";
 // import { ZipWriter } from "jsr:@zip-js/zip-js";
 
-for await (const e of walk("", {})) {
-  e;
-}
-
 const isDirectory = async (path: string): Promise<boolean> => {
   const fileName = parse(path).base;
   for await (const file of Deno.readDir(join(path, ".."))) {
