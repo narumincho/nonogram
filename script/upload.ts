@@ -2,7 +2,7 @@ import { getOctokit } from "npm:@actions/github";
 import { Command } from "jsr:@cliffy/command@1.0.0-rc.4";
 import { join, parse } from "jsr:@std/path";
 import { walk } from "jsr:@std/fs";
-// import { ZipWriter } from "jsr:@zip-js/zip-js";
+import { ZipWriter } from "jsr:@zip-js/zip-js";
 
 const isDirectory = async (path: string): Promise<boolean> => {
   const fileName = parse(path).base;
@@ -27,10 +27,6 @@ const getFileContentOrZippedDir = async (path: string): Promise<Uint8Array> => {
 
 await new Command()
   .env(
-    "GITHUB_TOKEN=<value>",
-    "",
-    { required: true },
-  ).env(
     "GITHUB_REPOSITORY_OWNER=<value>",
     "",
     { required: true },
@@ -44,6 +40,10 @@ await new Command()
     { required: true },
   ).option(
     "--path=<value>",
+    "",
+    { required: true },
+  ).option(
+    "--githubToken=<value>",
     "",
     { required: true },
   )

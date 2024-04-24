@@ -18,7 +18,12 @@ jobs:
           cache: true
       - run: flutter build windows --dart-define=COMMIT_SHA=${{ github.sha }}
       - uses: denoland/setup-deno@v1
-      - run: deno run -A ./script/upload.ts --releaseId ${{ github.event.release.id }} --name windows --path ./build/windows/x64/runner/Release
+      - run: >
+          deno run -A ./script/upload.ts
+          --releaseId ${{ github.event.release.id }}
+          --name windows
+          --path ./build/windows/x64/runner/Release
+          --githubToken ${{ secrets.GITHUB_TOKEN }}
   build-macos:
     runs-on: macos-latest
     steps:
@@ -32,4 +37,9 @@ jobs:
           cache: true
       - run: flutter build macos --dart-define=COMMIT_SHA=${{ github.sha }}
       - uses: denoland/setup-deno@v1
-      - run: deno run -A ./script/upload.ts --releaseId ${{ github.event.release.id }} --name macos --path ./build
+      - run: >
+          deno run -A ./script/upload.ts
+          --releaseId ${{ github.event.release.id }}
+          --name macos
+          --path ./build
+          --githubToken ${{ secrets.GITHUB_TOKEN }}
