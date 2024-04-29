@@ -44,8 +44,7 @@ class NonoGramView extends StatelessWidget {
           top: hintSize - 1,
           width: size,
           height: 2,
-          child: const DecoratedBox(
-              decoration: BoxDecoration(color: Colors.black)),
+          child: const ColoredBox(color: Colors.black),
         ),
         // 縦線
         Positioned(
@@ -53,9 +52,7 @@ class NonoGramView extends StatelessWidget {
           top: 0,
           width: 2,
           height: size,
-          child: const DecoratedBox(
-            decoration: BoxDecoration(color: Colors.black),
-          ),
+          child: const ColoredBox(color: Colors.black),
         ),
         // 横線
         for (final (index, _) in value.rowHints.indexed)
@@ -65,9 +62,7 @@ class NonoGramView extends StatelessWidget {
                 (1 + index) * (cellTableSize / value.rowHints.length),
             width: size,
             height: (index + 1) % 5 == 0 ? 2 : 1,
-            child: const DecoratedBox(
-              decoration: BoxDecoration(color: Colors.black),
-            ),
+            child: const ColoredBox(color: Colors.black),
           ),
         // 縦線
         for (final (index, _) in value.columnHints.indexed)
@@ -77,9 +72,7 @@ class NonoGramView extends StatelessWidget {
             top: 0,
             width: (index + 1) % 5 == 0 ? 2 : 1,
             height: size,
-            child: const DecoratedBox(
-              decoration: BoxDecoration(color: Colors.black),
-            ),
+            child: const ColoredBox(color: Colors.black),
           ),
         // 列ヒント
         for (final (index, hints) in value.columnHints.indexed)
@@ -141,11 +134,7 @@ class NonoGramView extends StatelessWidget {
               location.index * (cellTableSize / value.rowHints.length),
           width: size,
           height: cellTableSize / value.rowHints.length,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: color,
-            ),
-          ),
+          child: ColoredBox(color: color),
         );
       case Direction.column:
         return Positioned(
@@ -154,11 +143,7 @@ class NonoGramView extends StatelessWidget {
           top: 0,
           width: cellTableSize / value.rowHints.length,
           height: size,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: color,
-            ),
-          ),
+          child: ColoredBox(color: color),
         );
     }
   }
@@ -174,14 +159,12 @@ class _CellView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: switch (cell) {
-          Cell.unknown => Colors.transparent,
-          Cell.filled => Colors.black,
-          Cell.empty => Colors.transparent,
-        },
-      ),
+    return ColoredBox(
+      color: switch (cell) {
+        Cell.unknown => Colors.transparent,
+        Cell.filled => Colors.black,
+        Cell.empty => Colors.transparent,
+      },
       child: switch (cell) {
         Cell.unknown => null,
         Cell.filled => null,
