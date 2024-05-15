@@ -1,10 +1,10 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:narumincho_util/narumincho_util.dart';
 import 'package:nonogram/logic/hint_number.dart';
-import 'package:collection/collection.dart';
 import 'package:nonogram/logic/result.dart';
 
 typedef StepResult
@@ -126,7 +126,7 @@ class Nonogram {
         Direction.row => this.cells.replace(location.index, cells),
         Direction.column => this
             .cells
-            .zipU(cells)
+            .zip(cells)
             .map((tuple) => tuple.$1.replace(location.index, tuple.$2))
             .toIList(),
       },
@@ -320,7 +320,7 @@ int getMinSizeByHints(IList<HintNumber> hints) {
 
 /// パターンが条件を満たすか
 bool satisfyCells(IList<bool> target, IList<Cell> cells) {
-  return target.zipU(cells).every((tuple) => switch (tuple) {
+  return target.zip(cells).every((tuple) => switch (tuple) {
         (_, Cell.unknown) => true,
         (true, Cell.filled) => true,
         (false, Cell.filled) => false,
@@ -350,14 +350,4 @@ int fillCount(IList<Cell> previous, IList<Cell> current) {
           tuple.$1 == Cell.unknown &&
           (tuple.$2 == Cell.filled || tuple.$2 == Cell.empty))
       .length;
-}
-
-/// https://github.com/marcglasberg/fast_immutable_collections/pull/77
-/// がマージされるまでの処理
-extension Zip<T> on IList<T> {
-  Iterable<(T, U)> zipU<U>(Iterable<U> otherIterable) {
-    final other = otherIterable.toList();
-    final minLength = min(length, other.length);
-    return Iterable.generate(minLength, (index) => (this[index], other[index]));
-  }
 }

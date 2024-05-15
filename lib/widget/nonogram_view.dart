@@ -151,7 +151,6 @@ class NonoGramView extends StatelessWidget {
 
 class _CellView extends StatelessWidget {
   const _CellView({
-    super.key,
     required this.cell,
   });
 
