@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:nonogram/env.dart';
 import 'package:nonogram/logic/nonogram.dart';
 import 'package:nonogram/widget/nonogram_input.dart';

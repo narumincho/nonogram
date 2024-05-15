@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:nonogram/logic/nonogram.dart';
 import 'package:nonogram/widget/column_hint_input.dart';
 import 'package:nonogram/widget/row_hint_input.dart';
@@ -113,7 +112,6 @@ class NonoGramInput extends StatelessWidget {
 
 class _CellInput extends StatelessWidget {
   const _CellInput({
-    super.key,
     required this.cell,
     required this.onChanged,
   });
