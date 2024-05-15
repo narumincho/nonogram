@@ -1,5 +1,6 @@
 import { Command } from "jsr:@cliffy/command@1.0.0-rc.4";
-import { fromFileUrl, join, parse } from "jsr:@std/path";
+import { fromFileUrl, join, parse, toFileUrl } from "jsr:@std/path";
+import { join as urlJoin } from "jsr:@std/url/join";
 // import { walk } from "jsr:@std/fs";
 import {
   Uint8ArrayReader,
@@ -7,6 +8,8 @@ import {
   ZipWriter,
 } from "jsr:@zip-js/zip-js";
 import ky from "https://esm.sh/ky@1.2.4";
+/// @deno-types="npm:@types/archiver"
+import {} from "npm:archiver";
 
 /**
  * https://docs.github.com/ja/rest/releases/assets?apiVersion=2022-11-28#list-release-assets
@@ -49,7 +52,7 @@ const deleteReleaseAsset = async (parameter: {
   readonly githubToken: string;
   readonly assetId: number;
 }): Promise<void> => {
-  const response = await ky.delete(
+  await ky.delete(
     `https://api.github.com/repos/${parameter.githubRepository}/releases/assets/${parameter.assetId}`,
     {
       headers: {
@@ -59,8 +62,6 @@ const deleteReleaseAsset = async (parameter: {
       },
     },
   );
-  const text = await response.text();
-  console.log(text);
 };
 
 /**
@@ -98,24 +99,24 @@ const uploadReleaseAsset = async (parameter: {
   }
 };
 
-const isDirectory = async (path: string): Promise<boolean> => {
-  const fileName = parse(path).base;
-  for await (const file of Deno.readDir(join(path, ".."))) {
+const isDirectory = async (fileUrl: URL): Promise<boolean> => {
+  const fileName = parse(fromFileUrl(fileUrl)).base;
+  for await (const file of Deno.readDir(urlJoin(fileUrl, ".."))) {
     if (file.name === fileName) {
       return file.isDirectory;
     }
   }
-  throw new Error(`File or Directory not found: ${path}`);
+  throw new Error(`File or Directory not found: ${fileUrl}`);
 };
 
 const getFileContentOrZippedDir = async (
-  path: string,
+  fileUrl: URL,
 ): Promise<Uint8Array> => {
-  if (await isDirectory(path)) {
+  if (await isDirectory(fileUrl)) {
     const output = new Uint8ArrayWriter();
-    const writer = new ZipWriter(output);
+    const writer = new ZipWriter(output.writable);
     writer.add("dummy", new Uint8ArrayReader(new Uint8Array([1, 2, 3])), {
-      directory: true,
+      directory: false,
     });
     // for await (const entry of walk(path)) {
     //   console.log(entry.path, entry.name, entry.isDirectory);
@@ -133,7 +134,7 @@ const getFileContentOrZippedDir = async (
     writer.close();
     return await output.getData();
   }
-  return await Deno.readFile(path);
+  return await Deno.readFile(fileUrl);
 };
 
 await new Command()
@@ -183,12 +184,16 @@ await new Command()
           },
         );
       }
-      await uploadReleaseAsset({
-        githubRepository,
-        releaseId,
-        githubToken,
-        name,
-        body: await getFileContentOrZippedDir(fromFileUrl(path)),
-      });
+      const binary = await getFileContentOrZippedDir(
+        toFileUrl(join(Deno.cwd(), path)),
+      );
+      console.log("終わったってよ", binary);
+      // await uploadReleaseAsset({
+      //   githubRepository,
+      //   releaseId,
+      //   githubToken,
+      //   name,
+      //   body: ,
+      // });
     },
   ).parse();
