@@ -1,11 +1,7 @@
 import { Command } from "jsr:@cliffy/command@1.0.0-rc.4";
 import { join, parse } from "jsr:@std/path";
 import { walk } from "jsr:@std/fs";
-import {
-  Uint8ArrayReader,
-  Uint8ArrayWriter,
-  ZipWriter,
-} from "jsr:@zip-js/zip-js";
+import { ZipWriter } from "jsr:@zip-js/zip-js";
 // import ky from 'https://esm.sh/ky';
 
 /**
@@ -184,8 +180,7 @@ await new Command()
         releaseId,
         githubToken,
         name,
-        body: new Uint8Array([1, 2, 3]),
-        // body: await getFileContentOrZippedDir(path),
+        body: await getFileContentOrZippedDir(path),
       });
     },
   ).parse();
