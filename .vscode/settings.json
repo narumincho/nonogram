@@ -1,5 +1,5 @@
 {
-  "dart.flutterSdkPath": ".fvm/versions/3.19.4",
+  "dart.flutterSdkPath": ".fvm/versions/3.22.0",
   "editor.formatOnSave": true,
   "deno.enable": true,
   "[jsonc]": {
