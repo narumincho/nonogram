@@ -19,7 +19,7 @@ class NonogramApp extends StatefulWidget {
 }
 
 class _NonogramAppState extends State<NonogramApp> {
-  Nonogram _nonogram = Nonogram.empty(15, 15);
+  Nonogram _nonogram = Nonogram.empty(10, 10);
 
   @override
   Widget build(BuildContext context) {
