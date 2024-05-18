@@ -1,7 +1,11 @@
 import { Command } from "jsr:@cliffy/command@1.0.0-rc.4";
 import { join, parse } from "jsr:@std/path";
 import { walk } from "jsr:@std/fs";
-import { ZipWriter } from "jsr:@zip-js/zip-js";
+import {
+  Uint8ArrayReader,
+  Uint8ArrayWriter,
+  ZipWriter,
+} from "jsr:@zip-js/zip-js";
 // import ky from 'https://esm.sh/ky';
 
 /**
@@ -175,12 +179,14 @@ await new Command()
           },
         );
       }
+      const zipBinaryWriter = new Uint8ArrayWriter();
+      (await getFileContentOrZippedDir(path)).pipeTo(zipBinaryWriter.writable);
       await uploadReleaseAsset({
         githubRepository,
         releaseId,
         githubToken,
         name,
-        body: await getFileContentOrZippedDir(path),
+        body: await zipBinaryWriter.getData(),
       });
     },
   ).parse();
