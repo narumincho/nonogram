@@ -1,11 +1,7 @@
 import { Command } from "jsr:@cliffy/command@1.0.0-rc.4";
 import { join, parse } from "jsr:@std/path";
 import { walk } from "jsr:@std/fs";
-import {
-  Uint8ArrayReader,
-  Uint8ArrayWriter,
-  ZipWriter,
-} from "jsr:@zip-js/zip-js";
+import { Uint8ArrayWriter, ZipWriter } from "jsr:@zip-js/zip-js";
 // import ky from 'https://esm.sh/ky';
 
 /**
