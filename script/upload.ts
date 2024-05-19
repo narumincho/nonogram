@@ -73,6 +73,7 @@ const uploadReleaseAsset = async (parameter: {
   readonly githubToken: string;
   readonly name: string;
   readonly releaseId: number;
+  readonly contentType: string;
   readonly body: BodyInit;
 }): Promise<void> => {
   const url = new URL(
@@ -87,6 +88,7 @@ const uploadReleaseAsset = async (parameter: {
         Authorization: `Bearer ${parameter.githubToken}`,
         Accept: "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
+        "Content-Type": parameter.contentType,
       },
       body: parameter.body,
     },
@@ -183,6 +185,7 @@ await new Command()
         releaseId,
         githubToken,
         name,
+        contentType: "application/zip",
         body: await zipBinaryWriter.getData(),
       });
     },
