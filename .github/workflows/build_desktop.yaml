@@ -26,8 +26,8 @@ jobs:
       - run: >
           deno run -A ./script/upload.ts
           --releaseId ${{ github.event.release.id }}
-          --name windows
-          --path windows-nonogram.zip
+          --name windows-nonogram.zip
+          --path ./windows-nonogram.zip
           --githubToken ${{ secrets.GITHUB_TOKEN }}
   build-macos:
     runs-on: macos-latest
