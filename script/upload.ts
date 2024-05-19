@@ -176,6 +176,7 @@ await new Command()
         );
       }
       const zipBinaryWriter = new Uint8ArrayWriter();
+      await zipBinaryWriter.init?.();
       (await getFileContentOrZippedDir(path)).pipeTo(zipBinaryWriter.writable);
       await uploadReleaseAsset({
         githubRepository,
