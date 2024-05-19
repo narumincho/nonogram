@@ -39,10 +39,11 @@ jobs:
           channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
           cache: true
       - run: flutter build macos --dart-define=COMMIT_SHA=${{ github.sha }}
+      - run: zip -ry macos-nonogram.zip ./build/macos/Build/Products/Release/nonogram.app
       - uses: denoland/setup-deno@v1
       - run: >
           deno run -A ./script/upload.ts
           --releaseId ${{ github.event.release.id }}
-          --name macos
-          --path ./build
+          --name macos-nonogram
+          --path ./macos-nonogram.zip
           --githubToken ${{ secrets.GITHUB_TOKEN }}
