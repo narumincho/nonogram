@@ -20,12 +20,14 @@ jobs:
           channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
           cache: true
       - run: flutter build windows --dart-define=COMMIT_SHA=${{ github.sha }}
+      - run: zip -ry ../../../../../windows-nonogram.zip .
+        working-directory: ./build/windows/x64/runner/Release
       - uses: denoland/setup-deno@v1
       - run: >
           deno run -A ./script/upload.ts
           --releaseId ${{ github.event.release.id }}
           --name windows
-          --path ./build/windows/x64/runner/Release
+          --path windows-nonogram.zip
           --githubToken ${{ secrets.GITHUB_TOKEN }}
   build-macos:
     runs-on: macos-latest
@@ -39,7 +41,8 @@ jobs:
           channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
           cache: true
       - run: flutter build macos --dart-define=COMMIT_SHA=${{ github.sha }}
-      - run: zip -ry macos-nonogram.zip ./build/macos/Build/Products/Release/nonogram.app
+      - run: zip -ry ../../../../../macos-nonogram.zip ./nonogram.app
+        working-directory: ./build/macos/Build/Products/Release
       - uses: denoland/setup-deno@v1
       - run: >
           deno run -A ./script/upload.ts

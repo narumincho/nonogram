@@ -1,8 +1,4 @@
 import { Command } from "jsr:@cliffy/command@1.0.0-rc.4";
-import { join, parse } from "jsr:@std/path";
-import { walk } from "jsr:@std/fs";
-import { Uint8ArrayWriter, ZipWriter } from "jsr:@zip-js/zip-js";
-// import ky from 'https://esm.sh/ky';
 
 /**
  * https://docs.github.com/ja/rest/releases/assets?apiVersion=2022-11-28#list-release-assets
@@ -98,38 +94,6 @@ const uploadReleaseAsset = async (parameter: {
   }
 };
 
-const isDirectory = async (path: string): Promise<boolean> => {
-  const fileName = parse(path).base;
-  for await (const file of Deno.readDir(join(path, ".."))) {
-    if (file.name === fileName) {
-      return file.isDirectory;
-    }
-  }
-  throw new Error(`File or Directory not found: ${path}`);
-};
-
-const getFileContentOrZippedDir = async (
-  path: string,
-): Promise<ReadableStream<Uint8Array>> => {
-  if (await isDirectory(path)) {
-    const output = new TransformStream<Uint8Array, Uint8Array>();
-    const writer = new ZipWriter(output.writable);
-    for await (const entry of walk(path)) {
-      console.log(entry.path, entry.name, entry.isDirectory);
-      if (entry.isDirectory) {
-        writer.add(entry.path, undefined, {
-          directory: true,
-        });
-      } else {
-        writer.add(entry.path, (await Deno.open(entry.path)).readable);
-      }
-    }
-    writer.close();
-    return output.readable;
-  }
-  return (await Deno.open(path)).readable;
-};
-
 await new Command()
   .option(
     "--releaseId=<value:integer>",
@@ -141,7 +105,7 @@ await new Command()
     { required: true },
   ).option(
     "--path=<value>",
-    "",
+    "zip file path",
     { required: true },
   ).option(
     "--githubToken=<value>",
@@ -177,16 +141,13 @@ await new Command()
           },
         );
       }
-      const zipBinaryWriter = new Uint8ArrayWriter();
-      await zipBinaryWriter.init?.();
-      (await getFileContentOrZippedDir(path)).pipeTo(zipBinaryWriter.writable);
       await uploadReleaseAsset({
         githubRepository,
         releaseId,
         githubToken,
         name,
         contentType: "application/zip",
-        body: await zipBinaryWriter.getData(),
+        body: await Deno.readFile(path),
       });
     },
   ).parse();
