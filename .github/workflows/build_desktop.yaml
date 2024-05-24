@@ -50,3 +50,53 @@ jobs:
           --name macos-nonogram.zip
           --path ./macos-nonogram.zip
           --githubToken ${{ secrets.GITHUB_TOKEN }}
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: kuhnroyal/flutter-fvm-config-action@v2
+        id: fvm-config-action
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm-config-action.outputs.FLUTTER_VERSION }}
+          channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
+          cache: true
+      - run: flutter build linux --dart-define=COMMIT_SHA=${{ github.sha }}
+      - run: pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
+      - run: zip -ry ../../../../../linux-nonogram.zip ./nonogram
+        working-directory: ./build/linux/x64/release/bundle
+      - run: pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
+      - uses: denoland/setup-deno@v1
+      - run: >
+          deno run -A ./script/upload.ts
+          --releaseId ${{ github.event.release.id }}
+          --name linux-nonogram.zip
+          --path ./linux-nonogram.zip
+          --githubToken ${{ secrets.GITHUB_TOKEN }}
+  build-linux-arm64:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: linux/arm64
+      - uses: actions/checkout@v4
+      - uses: kuhnroyal/flutter-fvm-config-action@v2
+        id: fvm-config-action
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm-config-action.outputs.FLUTTER_VERSION }}
+          channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
+          cache: true
+      - run: flutter build linux --dart-define=COMMIT_SHA=${{ github.sha }}
+      - run: pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
+      - run: zip -ry ../../../../../linux-arm64-nonogram.zip ./nonogram
+        working-directory: ./build/linux/arm64/release/bundle
+      - run: pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
+      - uses: denoland/setup-deno@v1
+      - run: >
+          deno run -A ./script/upload.ts
+          --releaseId ${{ github.event.release.id }}
+          --name linux-arm64-nonogram.zip
+          --path ./linux-arm64-nonogram.zip
+          --githubToken ${{ secrets.GITHUB_TOKEN }}
