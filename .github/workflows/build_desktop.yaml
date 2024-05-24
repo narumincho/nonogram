@@ -56,12 +56,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: kuhnroyal/flutter-fvm-config-action@v2
         id: fvm-config-action
+      # https://qiita.com/fia/items/435b72b9ef6ca9e0410c
+      - run: sudo apt install clang curl pkg-config ninja-build cmake libgtk-3-dev libblkid-dev liblzma-dev unzip
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ steps.fvm-config-action.outputs.FLUTTER_VERSION }}
           channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
           cache: true
       - run: flutter build linux --dart-define=COMMIT_SHA=${{ github.sha }}
+      # https://qiita.com/yone098@github/items/bba8a42de6b06e40983b
       - run: pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
       - run: zip -ry ../../../../../linux-nonogram.zip ./nonogram
         working-directory: ./build/linux/x64/release/bundle
@@ -81,6 +84,7 @@ jobs:
         with:
           platforms: linux/arm64
       - uses: actions/checkout@v4
+      - run: sudo apt install clang curl pkg-config ninja-build cmake libgtk-3-dev libblkid-dev liblzma-dev unzip
       - uses: kuhnroyal/flutter-fvm-config-action@v2
         id: fvm-config-action
       - uses: subosito/flutter-action@v2
