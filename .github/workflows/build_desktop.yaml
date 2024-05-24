@@ -95,7 +95,7 @@ jobs:
       - run: flutter build linux --dart-define=COMMIT_SHA=${{ github.sha }}
       - run: pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
       - run: zip -ry ../../../../../linux-arm64-nonogram.zip ./nonogram
-        working-directory: ./build/linux/arm64/release/bundle
+        working-directory: ./build/linux/x64/release/bundle
       - run: pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
       - uses: denoland/setup-deno@v1
       - run: >
