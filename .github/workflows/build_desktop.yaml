@@ -66,7 +66,7 @@ jobs:
       - run: flutter build linux --dart-define=COMMIT_SHA=${{ github.sha }}
       # https://qiita.com/yone098@github/items/bba8a42de6b06e40983b
       - run: pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
-      - run: zip -ry ../../../../../linux-nonogram.zip ./nonogram
+      - run: zip -ry ../../../../../linux-nonogram.zip .
         working-directory: ./build/linux/x64/release/bundle
       - run: pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
       - uses: denoland/setup-deno@v1
@@ -94,7 +94,7 @@ jobs:
           cache: true
       - run: flutter build linux --dart-define=COMMIT_SHA=${{ github.sha }}
       - run: pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
-      - run: zip -ry ../../../../../linux-arm64-nonogram.zip ./nonogram
+      - run: zip -ry ../../../../../linux-arm64-nonogram.zip .
         working-directory: ./build/linux/x64/release/bundle
       - run: pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
       - uses: denoland/setup-deno@v1
